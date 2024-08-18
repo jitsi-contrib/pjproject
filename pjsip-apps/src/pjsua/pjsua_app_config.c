@@ -218,6 +218,7 @@ static void usage(void)
     puts  ("");
     puts  ("User Agent options:");
     puts  ("  --auto-answer=code  Automatically answer incoming calls with code (e.g. 200)");
+    puts  ("  --auto-answer_timeout=seconds  The seconds to wait for incoming call in auto-answer mode");
     puts  ("  --max-calls=N       Maximum number of concurrent calls (default:4, max:255)");
     puts  ("  --thread-cnt=N      Number of worker threads (default:1)");
     puts  ("  --duration=SEC      Set maximum call duration (default:no limit)");
@@ -371,7 +372,7 @@ static pj_status_t parse_args(int argc, char *argv[],
            OPT_REG_RETRY_INTERVAL, OPT_REG_USE_PROXY,
            OPT_MWI, OPT_NAMESERVER, OPT_STUN_SRV, OPT_UPNP, OPT_OUTB_RID,
            OPT_ADD_BUDDY, OPT_OFFER_X_MS_MSG, OPT_NO_PRESENCE,
-           OPT_AUTO_ANSWER, OPT_AUTO_PLAY, OPT_AUTO_PLAY_HANGUP, OPT_AUTO_LOOP,
+           OPT_AUTO_ANSWER, OPT_AUTO_ANSWER_TIMER, OPT_AUTO_KEYFRAME, OPT_AUTO_PLAY, OPT_AUTO_PLAY_HANGUP, OPT_AUTO_LOOP,
            OPT_AUTO_CONF, OPT_CLOCK_RATE, OPT_SND_CLOCK_RATE, OPT_STEREO,
            OPT_USE_ICE, OPT_ICE_REGULAR, OPT_ICE_TRICKLE,
            OPT_USE_SRTP, OPT_SRTP_SECURE,
@@ -455,6 +456,8 @@ static pj_status_t parse_args(int argc, char *argv[],
         { "offer-x-ms-msg",0,0,OPT_OFFER_X_MS_MSG},
         { "no-presence", 0, 0, OPT_NO_PRESENCE},
         { "auto-answer",1, 0, OPT_AUTO_ANSWER},
+        { "auto-answer-timer",1, 0, OPT_AUTO_ANSWER_TIMER},
+        { "auto-keyframe",1, 0, OPT_AUTO_KEYFRAME},
         { "auto-play",  0, 0, OPT_AUTO_PLAY},
         { "auto-play-hangup",0, 0, OPT_AUTO_PLAY_HANGUP},
         { "auto-rec",   0, 0, OPT_AUTO_REC},
@@ -1329,6 +1332,14 @@ static pj_status_t parse_args(int argc, char *argv[],
                           "(expecting 100-699"));
                 return -1;
             }
+            break;
+
+        case OPT_AUTO_ANSWER_TIMER:
+            cfg->auto_answer_timer = my_atoi(pj_optarg);
+            break;
+
+        case OPT_AUTO_KEYFRAME:
+            cfg->auto_keyframe = my_atoi(pj_optarg);
             break;
 
         case OPT_MAX_CALLS:
@@ -2313,6 +2324,20 @@ int write_settings(pjsua_app_config *config, char *buf, pj_size_t max)
     if (config->auto_answer != 0) {
         pj_ansi_snprintf(line, sizeof(line), "--auto-answer %d\n",
                         config->auto_answer);
+        pj_strcat2(&cfg, line);
+    }
+
+    /* Auto-answer-timer. */
+    if (config->auto_answer_timer != 0) {
+        pj_ansi_snprintf(line, sizeof(line), "--auto-answer-timer %d\n",
+                        config->auto_answer_timer);
+        pj_strcat2(&cfg, line);
+    }
+
+    /* Auto-keyframe. */
+    if (config->auto_keyframe != 0) {
+        pj_ansi_snprintf(line, sizeof(line), "--auto-keyframe %d\n",
+                        config->auto_keyframe);
         pj_strcat2(&cfg, line);
     }
 
