@@ -25,6 +25,10 @@ UpgradeLog*.htm
 *.opendb
 samples.log
 
+# vim
+*~
+*.sw?
+
 # GNU stuff
 config.log
 config.status
