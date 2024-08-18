@@ -42,9 +42,9 @@
 
 #define THIS_FILE               "sdl_dev.c"
 #define DEFAULT_CLOCK_RATE      90000
-#define DEFAULT_WIDTH           640
-#define DEFAULT_HEIGHT          480
-#define DEFAULT_FPS             25
+#define DEFAULT_WIDTH           1280
+#define DEFAULT_HEIGHT          720
+#define DEFAULT_FPS             30
 
 typedef struct sdl_fmt_info
 {
@@ -373,7 +373,9 @@ static pj_status_t handle_event(void *data)
         if (strm && pevent.type != PJMEDIA_EVENT_NONE) {
             pj_status_t status;
 
+#if 0
             pjmedia_event_publish(NULL, strm, &pevent, 0);
+#endif
 
             switch (pevent.type) {
             case PJMEDIA_EVENT_WND_RESIZED:
